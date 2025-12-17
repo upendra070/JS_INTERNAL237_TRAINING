@@ -1,0 +1,172 @@
+using System;
+
+// 1. Base Patient class
+public abstract class Patient
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public abstract string PatientType { get; }
+
+    public Patient(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
+}
+
+// 2. Derived patient types
+public class InPatient : Patient
+{
+    public int DaysAdmitted { get; set; }
+    public override string PatientType => "InPatient";
+
+    public InPatient(string name, int age, int days) : base(name, age)
+    {
+        DaysAdmitted = days;
+    }
+}
+
+public class OutPatient : Patient
+{
+    public int Visits { get; set; }
+    public override string PatientType => "OutPatient";
+
+    public OutPatient(string name, int age, int visits) : base(name, age)
+    {
+        Visits = visits;
+    }
+}
+
+// 3. Delegate for billing
+public delegate double BillingDelegate(Patient patient);
+
+// 4. Event args
+public class PatientEventArgs : EventArgs
+{
+    public Patient Patient { get; set; }
+    public double BillAmount { get; set; }
+
+    public PatientEventArgs(Patient patient, double billAmount)
+    {
+        Patient = patient;
+        BillAmount = billAmount;
+    }
+}
+
+// 5. Hospital class with events
+public class Hospital
+{
+    public event EventHandler<PatientEventArgs> PatientAdmitted;
+    public event EventHandler<PatientEventArgs> BillGenerated;
+
+    public void AdmitPatient(Patient patient)
+    {
+        Console.WriteLine($"\n{patient.Name} admitted as {patient.PatientType}.");
+        OnPatientAdmitted(patient, 0);
+    }
+
+    public void GenerateBill(Patient patient, BillingDelegate billing)
+    {
+        double bill = billing(patient);
+        Console.WriteLine($"Bill for {patient.Name}: ${bill}");
+        OnBillGenerated(patient, bill);
+    }
+
+    protected virtual void OnPatientAdmitted(Patient patient, double bill)
+    {
+        PatientAdmitted?.Invoke(this, new PatientEventArgs(patient, bill));
+    }
+
+    protected virtual void OnBillGenerated(Patient patient, double bill)
+    {
+        BillGenerated?.Invoke(this, new PatientEventArgs(patient, bill));
+    }
+}
+
+// 6. Department class
+public class Department
+{
+    public string Name { get; set; }
+
+    public Department(string name) { Name = name; }
+
+    public void Notify(object sender, PatientEventArgs e)
+    {
+        if (e.BillAmount == 0)
+            Console.WriteLine($"{Name} Department: {e.Patient.Name} admitted.");
+        else
+            Console.WriteLine($"{Name} Department: Bill generated for {e.Patient.Name} - ${e.BillAmount}");
+    }
+}
+
+// 7. Billing strategies
+public static class Billing
+{
+    public static double InPatientBilling(Patient patient)
+    {
+        if (patient is InPatient ip)
+            return ip.DaysAdmitted * 500; // $500/day
+        return 0;
+    }
+
+    public static double OutPatientBilling(Patient patient)
+    {
+        if (patient is OutPatient op)
+            return op.Visits * 100; // $100/visit
+        return 0;
+    }
+}
+
+// 8. Main program with user input
+class Program
+{
+    static void Main()
+    {
+        Hospital hospital = new Hospital();
+
+        // Departments
+        Department billingDept = new Department("Billing");
+        Department pharmacyDept = new Department("Pharmacy");
+
+        hospital.PatientAdmitted += billingDept.Notify;
+        hospital.PatientAdmitted += pharmacyDept.Notify;
+        hospital.BillGenerated += billingDept.Notify;
+
+        Console.WriteLine("=== Hospital Patient Management System ===\n");
+
+        // User input for patient
+        Console.Write("Enter Patient Name: ");
+        string name = Console.ReadLine();
+
+        Console.Write("Enter Patient Age: ");
+        int age = int.Parse(Console.ReadLine());
+
+        Console.Write("Select Patient Type (1: InPatient, 2: OutPatient): ");
+        int typeChoice = int.Parse(Console.ReadLine());
+
+        Patient patient;
+        BillingDelegate billingStrategy;
+
+        if (typeChoice == 1)
+        {
+            Console.Write("Enter number of days admitted: ");
+            int days = int.Parse(Console.ReadLine());
+            patient = new InPatient(name, age, days);
+            billingStrategy = Billing.InPatientBilling;
+        }
+        else
+        {
+            Console.Write("Enter number of visits: ");
+            int visits = int.Parse(Console.ReadLine());
+            patient = new OutPatient(name, age, visits);
+            billingStrategy = Billing.OutPatientBilling;
+        }
+
+        // Admit patient and generate bill
+        hospital.AdmitPatient(patient);
+        hospital.GenerateBill(patient, billingStrategy);
+
+        Console.WriteLine("\nPress any key to exit...");
+        Console.ReadKey();
+    }
+}
