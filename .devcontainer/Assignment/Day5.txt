@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript DOM Tasks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background: #6a5acd;
+            color: white;
+        }
+        #counterValue {
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        #boxes div {
+            width: 100px;
+            height: 100px;
+            background: #ff758c;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        #todoList li {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Task 1 -->
+    <section>
+        <h2>Task 1: Change Text on Button Click</h2>
+        <p id="welcomeText">Click the button</p>
+        <button onclick="changeText()">Click Me</button>
+    </section>
+
+    <!-- Task 2 -->
+    <section>
+        <h2>Task 2: Background Color Changer</h2>
+        <button onclick="changeBg('red')">Red</button>
+        <button onclick="changeBg('blue')">Blue</button>
+        <button onclick="changeBg('green')">Green</button>
+    </section>
+
+    <!-- Task 3 -->
+    <section>
+        <h2>Task 3: Image Switcher</h2>
+        <img id="image" src="https://via.placeholder.com/200x150?text=Image1" width="200" alt="Image">
+        <br>
+        <button onclick="prevImage()">Previous</button>
+        <button onclick="nextImage()">Next</button>
+    </section>
+
+    <!-- Task 4 -->
+    <section>
+        <h2>Task 4: Show/Hide Paragraph</h2>
+        <p id="togglePara">This paragraph can be hidden or shown.</p>
+        <button onclick="toggleParagraph()">Toggle Paragraph</button>
+    </section>
+
+    <!-- Task 5 -->
+    <section>
+        <h2>Task 5: Counter App</h2>
+        <button onclick="decrease()">- Decrease</button>
+        <span id="counterValue">0</span>
+        <button onclick="increase()">+ Increase</button>
+    </section>
+
+    <!-- Task 6 -->
+    <section>
+        <h2>Task 6: Create Element Dynamically</h2>
+        <button onclick="addBox()">Add Box</button>
+        <div id="boxes"></div>
+    </section>
+
+    <!-- Task 7 -->
+    <section>
+        <h2>Task 7: Form Input Reader</h2>
+        <input type="text" id="userName" placeholder="Enter your name">
+        <button onclick="readName()">Submit</button>
+        <p id="nameOutput"></p>
+    </section>
+
+    <!-- Task 8 -->
+    <section>
+        <h2>Task 8: Todo List</h2>
+        <input type="text" id="todoInput" placeholder="Enter task">
+        <button onclick="addTask()">Add Task</button>
+        <ul id="todoList"></ul>
+    </section>
+
+    <!-- Task 9 -->
+    <section>
+        <h2>Task 9: Attribute Change</h2>
+        <img id="resizeImage" src="https://via.placeholder.com/150" alt="Image">
+        <br>
+        <button onclick="resizeImage('small')">Small</button>
+        <button onclick="resizeImage('large')">Large</button>
+    </section>
+
+    <!-- Task 10 -->
+    <section>
+        <h2>Task 10: Theme Switcher</h2>
+        <button onclick="toggleTheme()">Toggle Theme</button>
+    </section>
+
+    <!-- Task 11 -->
+    <section>
+        <h2>Task 11: Live Clock</h2>
+        <p id="clock"></p>
+    </section>
+
+    <!-- Task 12 -->
+    <section>
+        <h2>Task 12: Random Quote Generator</h2>
+        <button onclick="generateQuote()">Show Quote</button>
+        <p id="quoteOutput"></p>
+    </section>
+
+<script>
+    // Task 1
+    function changeText() {
+        document.getElementById('welcomeText').innerText = "Welcome to JavaScript!";
+    }
+
+    // Task 2
+    function changeBg(color) {
+        document.body.style.backgroundColor = color;
+    }
+
+    // Task 3
+    let images = [
+        "https://via.placeholder.com/200x150?text=Image1",
+        "https://via.placeholder.com/200x150?text=Image2"
+    ];
+    let currentImage = 0;
+    function nextImage() {
+        currentImage = (currentImage + 1) % images.length;
+        document.getElementById('image').src = images[currentImage];
+    }
+    function prevImage() {
+        currentImage = (currentImage - 1 + images.length) % images.length;
+        document.getElementById('image').src = images[currentImage];
+    }
+
+    // Task 4
+    function toggleParagraph() {
+        const para = document.getElementById('togglePara');
+        if (para.style.display === 'none') para.style.display = 'block';
+        else para.style.display = 'none';
+    }
+
+    // Task 5
+    let counter = 0;
+    function increase() {
+        counter++;
+        document.getElementById('counterValue').innerText = counter;
+    }
+    function decrease() {
+        if(counter > 0) counter--;
+        document.getElementById('counterValue').innerText = counter;
+    }
+
+    // Task 6
+    function addBox() {
+        const div = document.createElement('div');
+        div.style.width = "100px";
+        div.style.height = "100px";
+        div.style.backgroundColor = "#ff758c";
+        div.style.margin = "10px";
+        div.style.border = "2px solid #333";
+        div.style.borderRadius = "8px";
+        document.getElementById('boxes').appendChild(div);
+    }
+
+    // Task 7
+    function readName() {
+        const name = document.getElementById('userName').value;
+        document.getElementById('nameOutput').innerText = `Hello, ${name}!`;
+    }
+
+    // Task 8
+    function addTask() {
+        const input = document.getElementById('todoInput');
+        const task = input.value.trim();
+        if(task) {
+            const li = document.createElement('li');
+            li.innerText = task;
+            document.getElementById('todoList').appendChild(li);
+            input.value = "";
+        }
+    }
+
+    // Task 9
+    function resizeImage(size) {
+        const img = document.getElementById('resizeImage');
+        if(size === 'small') img.setAttribute('width', '100');
+        else img.setAttribute('width', '300');
+    }
+
+    // Task 10
+    let darkMode = false;
+    function toggleTheme() {
+        if(darkMode) {
+            document.body.style.backgroundColor = '#f0f2f5';
+            document.body.style.color = '#000';
+        } else {
+            document.body.style.backgroundColor = '#333';
+            document.body.style.color = '#fff';
+        }
+        darkMode = !darkMode;
+    }
+
+    // Task 11
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Task 12
+    let quotes = [
+        "Believe you can and you're halfway there.",
+        "The best time to plant a tree was 20 years ago. The second best time is now.",
+        "Do something today that your future self will thank you for.",
+        "Success is not final, failure is not fatal: It is the courage to continue that counts."
+    ];
+    function generateQuote() {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        document.getElementById('quoteOutput').innerText = quotes[randomIndex];
+    }
+</script>
+
+</body>
+</html>
