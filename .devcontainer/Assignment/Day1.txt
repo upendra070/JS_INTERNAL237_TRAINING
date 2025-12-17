@@ -1,0 +1,9 @@
+GitHub Repository Link
+
+What to submit:
+The URL of your GitHub repository where all your files (intro.js, setup.js, README.md) are stored.
+
+Example:
+https://github.com/your-username/js-day1-assignment
+
+
